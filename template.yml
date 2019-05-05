@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sample SAM Template for NotoriousRBD
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 10
+
+Resources:
+
+    NotoriousRBDFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            FunctionName: NotoriousRBD
+            CodeUri: src/NotoriousRBD/bin/Release/netcoreapp2.1/publish
+            Handler: NotoriousRBD::NotoriousRBD.Functions::Get
+            Runtime: dotnetcore2.1
+            Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+                Variables:
+                    PARAM1: VALUE
+            Events:
+                SearchGames:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /games
+                        Method: get
+                Genres:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /genres
+                        Method: get
+
+Outputs:
+
+    NotoriousRBDApi:
+      Description: "API Gateway endpoint URL for Prod stage for Debugging Example function"
+      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/DebuggingExample/"
+
+    NotoriousRBDFunction:
+      Description: "Debugging Example Lambda Function ARN"
+      Value: !GetAtt NotoriousRBDFunction.Arn
+
+    NotoriousRBDFunctionIamRole:
+      Description: "Implicit IAM Role created for Debugging Example function"
+      Value: !GetAtt NotoriousRBDFunctionRole.Arn
